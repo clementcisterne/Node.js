@@ -1,6 +1,7 @@
 //prérequis
 
     - Notion de base Javascript
+    - nature "orientée évènements"
 
 // Node.js à quoi ça sert ?
 
@@ -23,6 +24,22 @@
 
     // Pourquoi Node.js est-il rapide ?
 
-        Le moteur V8 ; compilation JIT (Just In Time)
+        - Le moteur V8 : compilation JIT (Just In Time)
+        - Le modèle non bloquant : Node.js a pu mettre en place une architecture de code entièrement non bloquante.
 
-        Le modèle non bloquant n
+        exemple :
+            request('http://www.site.com/fichier.zip', function (error, response, body) {
+                console.log("Fichier téléchargé !");
+            });
+            console.log("Je fais d'autres choses en attendant...");
+
+        En JavaScript on peut tout à fait envoyer une fonction en paramètre d'une autre fonction.
+        Cela signifie ici : "Exécute cette fonction quand le téléchargement est terminé".
+
+
+// Installation
+
+
+// Premiere application
+    Ce sera l'occasion d'expérimenter les fameux callbacks qui s'exécutent dès lors qu'un évènement survient
+
