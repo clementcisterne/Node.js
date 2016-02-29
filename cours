@@ -1,0 +1,28 @@
+//prérequis
+
+    - Notion de base Javascript
+
+// Node.js à quoi ça sert ?
+
+  - Pourquoi Node.js semble-t-il aussi apprécié des développeurs web ?
+  - Pourquoi avoir utilisé un langage comme JavaScript ? Je croyais que c'était juste pour faire des effets dans sa page web ?
+  - D'où vient cette rapidité supposée de Node.js ? A quoi ça peut me servir ?
+  - Est-ce que ce truc est mature ? Qui l'utilise ? Devrais-je l'utiliser moi aussi ?
+
+
+    // Du javascript  "à la papa" à Node.js
+
+        Concretemement node.js permet d'utiliser le language Javascript sur le serveur
+
+
+    // Node.js le javascript côté serveur
+
+         Node.js offre un environnement côté serveur qui nous permet aussi d'utiliser le langage JavaScript pour générer des pages web.
+         En gros, il vient en remplacement de langages serveur comme PHP, Java EE, etc.
+
+
+    // Pourquoi Node.js est-il rapide ?
+
+        Le moteur V8 ; compilation JIT (Just In Time)
+
+        Le modèle non bloquant n
