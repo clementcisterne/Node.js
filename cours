@@ -1,7 +1,8 @@
-//prérequis
+//mots-clés
 
     - Notion de base Javascript
     - nature "orientée évènements"
+    - Node.js n'est pas un framework. Node.js est un environnement très bas niveau
 
 // Node.js à quoi ça sert ?
 
@@ -40,6 +41,95 @@
 // Installation
 
 
-// Premiere application
+// Premiere application avec Node.js
     Ce sera l'occasion d'expérimenter les fameux callbacks qui s'exécutent dès lors qu'un évènement survient
+
+    // Serveur et threads
+
+        Node.js est bas niveau et monothread, mais il est "orienté évenements" (souplesse)
+        --> dès qu'il y a une action un peu longue, le programme redoone la main à node.js pour effectuer d'autres actions
+            en attendant qu'un evenement survienne pour dire que l'opération est terminée.
+
+
+    // Construire son serveur HTTP
+
+        var http = require('http');
+
+        var server = http.createServer(function(req, res) {
+          res.writeHead(200);
+          res.end('Salut tout le monde !');
+        });
+        server.listen(8080);
+
+
+        1. On appel la bibliothèque "http"
+        2. On appel la fonction createServer() de l'objet http dans server
+        3. On appel la fonction callback à executer quand un visiteur se connecte à norre site
+            - req (requête) : contient toutes les informations sur ce que le visiteur a demandé
+            - res (reponse) : l'objet de retour au visiteur, contient en général le HTML
+            - on renvoie le code 200 dans l'en-tête de la réponse HTTP --> Tout va bien" != 404
+            - on termine la réponse et on renvoie du texte brut avec end()
+        4. On lance le serveur en écoute sur le port 8080
+
+
+    // Retourner du HTML
+
+        les types de données qu'on envoie au client :
+
+            - texte brut : text/plain
+            - HTML          : text/html
+            - CSS           : text/css
+            - JPEG          : image/jpeg
+            - MPEG4         : video/mp4
+            - ZIP           : application/zop
+            ...
+
+        on spécifie le type MIME de la réponse (envoyé dans l'entête) -> on rajoute :
+            res.writeHead(200, {"Content-Type": "text/html"});
+            res.end('<p>Voici un paragraphe <strong>HTML</strong> !</p>');
+
+
+    // Determiner la page appelée et les paramètres
+
+        Pour l'instant, vu qu'on ne fait aucun test, notre application renvoie toujours la même chose.
+        Comment récuperer le nom de la page et les paramètres qui y circulent ?
+
+         - Le module "url"      : var url = require("url");
+         - on parse la requête  : url.parse(req.url).pathname;
+
+        Comment récuperer les paramètres ?
+            à partir de l'url :
+             - On parse l'url
+             - On inclue le module "querystring" : var querystring = require('querystring');
+             - On range les valeurs dans un tableau : var params = querystring.parse(url.parse(req.url).query);
+
+
+    // Les évènements
+
+        Node.js est un environement de developpement JavaScript basé sur les évènements
+        -> il y a un seul thread mais aucune opération n'est bloquante
+        -> les opérations un peu longues sont lancées en tâche de fond
+        -> un fonctions de callback est appelée quand l'opération est terminée
+
+
+        // Ecouter les évènements
+
+            Les évènements émient par les objets node.js héritent tous d'un objet EventEmitter
+
+            exemple avec Jquery :
+               $("canvas").on("mouseleave", function() { ... });
+                -> On dit qu'on attache l'evenement au DOM de la page
+
+            exemple avec Node.js :
+               server.on('close',function(){...})
+                -> On écoute l'evenement "close" de l'objet server
+
+
+
+
+
+
+
+
+
 
