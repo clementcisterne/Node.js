@@ -14,13 +14,13 @@
 
     // Du javascript  "à la papa" à Node.js
 
-        Concretemement node.js permet d'utiliser le language Javascript sur le serveur
+        - Concretemement node.js permet d'utiliser le language Javascript sur le serveur
 
 
     // Node.js le javascript côté serveur
 
-         Node.js offre un environnement côté serveur qui nous permet aussi d'utiliser le langage JavaScript pour générer des pages web.
-         En gros, il vient en remplacement de langages serveur comme PHP, Java EE, etc.
+         - Node.js offre un environnement côté serveur qui nous permet aussi d'utiliser le langage JavaScript pour générer des pages web.
+         - En gros, il vient en remplacement de langages serveur comme PHP, Java EE, etc.
 
 
     // Pourquoi Node.js est-il rapide ?
@@ -28,14 +28,14 @@
         - Le moteur V8 : compilation JIT (Just In Time)
         - Le modèle non bloquant : Node.js a pu mettre en place une architecture de code entièrement non bloquante.
 
-        exemple :
+        - exemple :
             request('http://www.site.com/fichier.zip', function (error, response, body) {
                 console.log("Fichier téléchargé !");
             });
             console.log("Je fais d'autres choses en attendant...");
 
-        En JavaScript on peut tout à fait envoyer une fonction en paramètre d'une autre fonction.
-        Cela signifie ici : "Exécute cette fonction quand le téléchargement est terminé".
+        - En JavaScript on peut tout à fait envoyer une fonction en paramètre d'une autre fonction.
+        - Cela signifie ici : "Exécute cette fonction quand le téléchargement est terminé".
 
 
 // Installation
@@ -74,7 +74,7 @@
 
     // Retourner du HTML
 
-        les types de données qu'on envoie au client :
+        - les types de données qu'on envoie au client :
 
             - texte brut : text/plain
             - HTML          : text/html
@@ -84,15 +84,15 @@
             - ZIP           : application/zop
             ...
 
-        on spécifie le type MIME de la réponse (envoyé dans l'entête) -> on rajoute :
+        - on spécifie le type MIME de la réponse (envoyé dans l'entête) -> on rajoute :
             res.writeHead(200, {"Content-Type": "text/html"});
             res.end('<p>Voici un paragraphe <strong>HTML</strong> !</p>');
 
 
     // Determiner la page appelée et les paramètres
 
-        Pour l'instant, vu qu'on ne fait aucun test, notre application renvoie toujours la même chose.
-        Comment récuperer le nom de la page et les paramètres qui y circulent ?
+        - Pour l'instant, vu qu'on ne fait aucun test, notre application renvoie toujours la même chose.
+        - Comment récuperer le nom de la page et les paramètres qui y circulent ?
 
          - Le module "url"      : var url = require("url");
          - on parse la requête  : url.parse(req.url).pathname;
@@ -114,35 +114,37 @@
 
         // Ecouter les évènements
 
-            Les évènements émient par les objets node.js héritent tous d'un objet EventEmitter
+            - Les évènements émient par les objets node.js héritent tous d'un objet EventEmitter
 
-            exemple avec Jquery :
+            - exemple avec Jquery :
                $("canvas").on("mouseleave", function() { ... });
                 -> On dit qu'on attache l'evenement au DOM de la page
 
-            exemple avec Node.js :
+            - exemple avec Node.js :
                server.on('close',function(){...})
                 -> On écoute l'evenement "close" de l'objet server
 
-            En faite ce code :
+            - En faite ce code :
                 var server = http.createServer(function(req, res) { });
-            peut aussi s'écrire :
+            - peut aussi s'écrire :
                 var server = http.createServer();
                 server.on('request', function(req, res) { });
 
-            On peut écouter plusieur évènements à la fois et faire 2 appel de on() pour le même évènement
+            - On peut écouter plusieur évènements à la fois et faire 2 appel de on() pour le même évènement
+
 
         // Emettre des évènements
 
-            Le module events basé sur EventEmitter :
+            - Le module events basé sur EventEmitter :
                 var EventEmitter = require ('events').EvenEmitter;
 
-            Puis pour emetre on fait appel à emit() depuis l'objet basé sur EventEmitter
+            - Puis pour emetre on fait appel à emit() depuis l'objet basé sur EventEmitter
                 - On indique le nom de l'evenement
                 - les eventuels paramètres
 
-
-
+            - exemple :
+                jeu.emit('gameover', 'Vous avez perdu !'); // Emission
+                jeu.on('gameover', function(message) { }); // Ecoute
 
 
 

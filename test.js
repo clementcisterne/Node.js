@@ -53,8 +53,8 @@ var jeu = new EventEmitter();
 server.on('close', function() {
     console.log('Bye bye !');
 })
-jeu.on('gameover', function(message){
-    console.log(message);
+jeu.on('gameover', function(message,entier){
+    console.log(message,entier);
 });
 /*
 kbd.on(67, function(){
@@ -66,6 +66,6 @@ kbd.on(67, function(){
 
 //_________________________________________________________________________________________________________________
 // Emmission
-jeu.emit('gameover', 'Vous avez perdu !');
+jeu.emit('gameover', 'Vous avez perdu !',2);
 
 server.listen(8080);
