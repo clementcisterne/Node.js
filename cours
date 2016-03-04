@@ -400,7 +400,6 @@
     // TP : la to do list
 
 
-
 // SOCKET.IO : Passez au temps réel !
 
     - socket.io est l'une des bibliothèques les plus prisées par ceux qui développent avec Node.js
