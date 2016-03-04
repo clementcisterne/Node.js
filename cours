@@ -149,12 +149,430 @@
 
 
 
+// Les modules Node.js et npm
 
 
 
 
+    // Créer des modules
+
+         - le module http : var http = require('http'); fait appel à http.js
+
+         - var test = require('./test'); // Fait appel à test.js (même dossier)
+
+         - var test = require('../test'); // Fait appel à test.js (dossier parent)
+
+         - var test = require('test'); // Fait appel à test.js (sous-dossier node_modules)
+
+         - les fichiers JS des module sont du JS classique :
+                1. on créé des focntions que l'on mets dans des variables
+                2. on exporte les fonctions : exports.direBonjour = function() { ... };
+
+         - Les fonctions que vous n'exportez pas dans votre fichier de module resteront privées
+           Mais elles pourront être utilisées par d'autres donction du module
+
+         - Dans le fichier principale on peux faire appel aux fonctions issue du module
+
+         - require() rencoie un objet qui contient les fonctions que vous avez exportées dans votre module
 
 
+    // Utiliser NPM pour installer des modules  http://npmjs.org !
+
+         - Imaginez que NPM est un peu l'équivalent d'apt-get sous Linux pour installer des programmes
+
+         - Quelques commandes (install à l'emplacement dans la console)
+                - Trouver un module     | npm search postgresql
+                - Installer un module   | npm install nom_de_module
+                                        | exemple : npm install markdown
+
+         - Installation locale & installation globale
+
+              - NPM installe les modules localement pour chaque projet
+                Mais il est possible d'installer des modules globaux
+
+              exemple : npm install markdown -g
+                        Vous aurez alors accès à un exécutable md2html dans votre console
+                        echo 'Hello *World*!' | md2html
+
+              - les modules globaux ne peuvent faire l'objet d'un require, ils s'utilise seulement dans la console
+
+         - mettre à jour : npm update
+
+
+    // Déclarer & publier son propre module
+
+         - Le fichier package.json : la carte d'identité de notre application
+
+              {
+                    "name": "mon-app",
+                    "version": "0.1.0",
+                    "dependencies": {
+                        "markdown": "~0.4"
+                    }
+              }
+
+         - Le fonctionnement des numéros de version
+
+                1.3.7 : 1 : Version Majeure
+                        2 : Version mineur
+                        7 : Numéro de patch
+
+         - Gestion des versions
+
+                "0.3.5"     // Version 0.3.5 uniquement
+                "~0.3.5"    // OK pour les versions 0.3.5, 0.3.6, 0.3.7, etc. jusqu'à la version 0.4.0 non incluse
+                "~0.3"      // OK pour les versions 0.3.X, 0.4.X, 0.5.X jusqu'à la version 1.0.0 non incluse
+
+
+         - Publier un mmodule
+
+              - Un module n'est rien d'autre qu'une application Node.js qui contient des instructions exports pour partager des fonctionnalités.
+
+              - créer un compte utilisateur sur npm : npm adduser
+                   - Un fichier package.json qui décrit votre module
+                      (au moins son nom, sa version et ses dépendances)
+
+                   - Un fichier README.md (écrit en markdown) qui présente votre module de façon un
+                      peu détaillée. N'hésitez pas à y inclure un mini-tutoriel expliquant
+                      comment utiliser votre module !
+
+
+
+
+    // Le framework express.js | npm install express
+
+
+        // Les routes
+
+            - Route simple
+
+                - Express vous permet de chaîner les appel à get() et use() :
+
+                app.get('/', function(req, res) {
+
+                })
+                .get('/sous-sol', function(req, res) {
+
+                })
+                .get('/etage/1/chambre', function(req, res) {
+
+                })
+                .use(function(req, res, next){
+
+                });
+
+              Cela revient à faire app.get().get().get()...
+              Ca marche parce que ces fonctions se renvoient l'une à l'autre l'objet app,
+              ce qui nous permet de raccourcir notre code.
+              Ne soyez donc pas étonnés si vous voyez des codes utilisant Express écrits sous cette forme.
+
+            - Routes dynamiques | des routes dont certaines portions peuvent varier
+
+                 On utilise :nomvariable dans l'url
+
+                 exemple :
+                   app.get('/etage/:etagenum/chambre', function(req, res) {
+
+                       res.setHeader('Content-Type', 'text/plain');
+
+                       res.end('Vous êtes à la chambre de l\'étage n°' + req.params.etagenum);
+
+                   });
+
+
+        // Les templates
+
+            - Les templates sont en quelque sorte des langages faciles à écrire
+              Ils nous permettent de produire du HTML et d'insérer au milieu du contenu variable.
+
+            - HP lui-même est en fait un langage de template qui nous permet de faire ceci :
+                <p> Êtes vous le visiteur n° <?php echo $visiteurnum; ?></p>
+
+            - Il existe beaucoup d'autres langages de templates, comme Twig, Smarty, Haml, JSP, Jade, EJS...
+              Express vous permet d'utiliser la plupart d'entre eux
+
+            - depuis votre fichier JavaScript, vous appelez le template de votre choix
+              Vous lui transmettez les variables dont il a besoin pour construire la page.
+
+            - Les bases d'EJS | npm install ejs
+                Nous pouvons maintenant déléguer la gestion de la vue (du HTML) à notre moteur de template.
+                Plus besoin d'écrire du HTML au milieu du code JavaScript comme un cochon !
+
+                    app.get('/etage/:etagenum/chambre', function(req, res) {
+                      res.render('chambre.ejs', {etage: req.params.etagenum});
+                    });
+
+                Ce code fait appel à un fichier chambre.ejs qui doit se trouver dans un sous-dossier appelé "views".
+                Créez donc un fichier /views/chambre.ejs et placez-y le code suivant :
+
+                    <h1>Vous êtes dans la chambre</h1>
+                    <p>Vous êtes à l'étage n°<%= etage %></p>
+
+                La balise <%= etage %> sera remplacée par la variable etage que l'on a transmise au template avec {etage: req.params.etagenum} !
+
+            - Plusieur paramètres et des boucles
+
+                Sachez que vous pouvez envoyer plusieurs paramètres à vos templates, y compris des tableaux !
+                Pour cette démonstration, nous allons faire une application qui compte jusqu'à un nombre
+                envoyé en paramètre et qui affiche un nom au hasard au sein d'un tableau
+
+                Voici le code JavaScript :
+
+                app.get('/compter/:nombre', function(req, res) {
+                    var noms = ['Robert', 'Jacques', 'David'];
+                    res.render('page.ejs', {compteur: req.params.nombre, noms: noms});
+                });
+
+                On transmet le nombre envoyé en paramètre et une liste de noms sous forme de tableau. Ensuite, dans le template EJS :
+
+                <h1>Je vais compter jusqu'à <%= compteur %></h1>
+                <p><%
+                    for(var i = 1 ; i <= compteur ; i++) {
+                    %>
+                    <%= i %>...
+                <% } %></p>
+                <p>Tant que j'y suis, je prends un nom au hasard qu'on m'a envoyé :
+                <%= noms[Math.round(Math.random() * (noms.length - 1))] %>
+                </p>
+
+                Vous voyez qu'on peut faire des boucles avec les templates EJS.
+                En fait, on utilise la même syntaxe que JavaScript (d'où la boucle for).
+                Ma petite manipulation à la fin du code me permet de prendre un nom au hasard dans le tableau qui a été envoyé au template.
+
+            - N'hésitez pas à regarder aussi d'autres systèmes de templates comme Jade ou Haml qui proposent une toute autre façon de créer ses pages web !
+
+        // Les middlewares
+
+            - Express est un framework basé sur le concept de middlewares
+              Ce sont des petits morceaux d'application qui rendent chacun un service spécifique.
+
+            - Express est fourni avec une quinzaine de middlewares de base, exemple :
+                compression     : permet la compression gzip de la page pour un envoi plus rapide au navigateur
+                cookie-parser   : permet de manipuler les cookies
+                cookie-session  : permet de gérer des informations de session (durant la visite d'un visiteur)
+                serve-static    : permet de renvoyer des fichiers statiques contenus dans un dossier (images, fichiers à télécharger...)
+                serve-favicon   : permet de renvoyer la favicon du site
+                csrf            : fournit une protection contre les failles CSRF
+
+            - Les middlewares sont interconnectés et peuvent communiquer entre eux
+              Express ne fait qu'ajouter les routes et les vues par-dessus l'ensemble
+
+            Tous ces middlewares communiquent entre eux en se renvoyant jusqu'à 4 paramètres :
+
+                err  : les erreurs
+                req  : la requête du visiteur
+                res  : la réponse à renvoyer (la page HTML et les informations d'en-tête)
+                next : un callback vers la prochaine fonction à appeler
+
+            - Utilisation : il suffit d'appeler la méthode app.use()
+
+              exemple :
+                var express = require('express');
+                var morgan = require('morgan'); // Charge le middleware de logging
+                var favicon = require('serve-favicon'); // Charge le middleware de favicon
+
+                var app = express();
+
+                app.use(morgan('combined'))                      // Active le middleware de logging
+                .use(express.static(__dirname + '/public'))      // Indique que le dossier /public contient des fichiers statiques (middleware chargé de base)
+                .use(favicon(__dirname + '/public/favicon.ico')) // Active la favicon indiquée
+                .use(function(req, res){                         // Répond enfin
+                    res.send('Hello');
+                });
+
+                app.listen(8080);
+
+              L'ordre d'appel des middlewares est extrêmement important.
+              Par exemple, on commence par activer le logger.
+              Si on le faisait en dernier, on ne loggerait rien !
+              Quand vous faites appel aux middlewares, réfléchissez donc à l'ordre
+              Il peut impacter fortement le fonctionnement de votre application.
+
+            - Chaque middleware va se renvoyer des données (la requête, la réponse, la fonction suivante à appeler...)
+              Chacun a un rôle très précis.
+
+            - Résume :
+              Express propose un ensemble de middlewares qui communiquent entre eux
+              Appelez ces middlewares pour utiliser leurs fonctionnalités
+              Faites attention à l'ordre d'appel qui est important (on n'active pas un logger à la fin des opérations !)
+
+
+    // TP : la to do list
+
+
+
+// SOCKET.IO : Passez au temps réel !
+
+    - socket.io est l'une des bibliothèques les plus prisées par ceux qui développent avec Node.js
+      elle permet de faire très simplement de la communication synchrone dans votre application
+      c'est-à-dire de la communication en temps réel !
+
+    // Que fait socket.io
+
+        - Le navigateur et le serveur restent connectés entre eux et peuvent s'échanger des messages dans un sens comme dans l'autre dans ce tuyau.
+          Désormais, le serveur peut donc lui-même décider d'envoyer un message au client comme un grand !
+
+        - Ne pa confondre AJAX et WebSocket :
+          AJAX, c'est toujours le client qui demande et le serveur qui répond
+          Le serveur ne peut pas décider de lui-même d'envoyer des informations au client
+          Avec WebSocket, ça devient possible !
+
+
+        - socket.io détermine pour chaque client quelle est la méthode de communication temps réel la plus adaptée pour le client :
+                - WebSocket
+                - Adobe Flash Socket
+                - AJAX long polling
+                - AJAX multipart streaming
+                - Forever Iframe
+                - JSONP Polling
+
+    // Emettre et recevoir des messages avec socket.io
+
+        - Installer socket.io | npm install socket.io
+
+        - Premier code : un client se connecte
+          On doit s'occuper de 2 fichiers en même temps
+            - Le fichier serveur : centralise et gère les connexions des clients connectés au site
+            - Le fichier client  : se connecte au serveur et affiche les résultats dans le navigateur
+
+        - Le serveur (app.js)
+
+            var http = require('http');
+            var fs = require('fs');
+
+            // Chargement du fichier index.html affiché au client
+            var server = http.createServer(function(req, res) {
+                fs.readFile('./index.html', 'utf-8', function(error, content) {
+                    res.writeHead(200, {"Content-Type": "text/html"});
+                    res.end(content);
+                });
+            });
+
+            // Chargement de socket.io
+            var io = require('socket.io').listen(server);
+
+            // Quand un client se connecte, on le note dans la console
+            io.sockets.on('connection', function (socket) {
+                console.log('Un client est connecté !');
+            });
+
+            server.listen(8080);
+
+          Ce code fait 2 choses
+            - il renvoie le fichier html quand un client demande à charcher la page dans son navigateur
+            - Il se prépare à recevoir des requetes via socket.io, on s'attend à recevoir un seul type de message : la connexion
+              Lorsqu'ion se connecte via socket.io; on logge ici l'information dans la console.
+
+        - Le client effectue donc 2 types de connexion :
+            - Une connexion "classique" au serveur en HTTP pour charger la page index.html
+            - Une connexion "temps réel" pour ouvrir un tunnel via les WebSockets grâce à socket.io
+
+        - Le client (index.html)
+
+            <!DOCTYPE html>
+            <html>
+                <head>
+                    <meta charset="utf-8" />
+                    <title>Socket.io</title>
+                </head>
+
+                <body>
+                    <h1>Communication avec socket.io !</h1>
+
+                    <script src="/socket.io/socket.io.js"></script>
+                    <script>
+                        var socket = io.connect('http://localhost:8080');
+                    </script>
+
+                </body>
+            </html>
+
+         J'ai placé le code JavaScript à la fin du code HTML volontairement.
+         Bien sûr on pourrait le mettre dans la balise <head> comme beaucoup le font,
+         mais le placer à la fin du code HTML permet d'éviter que le chargement du JavaScript ne bloque le chargement de la page HTML.
+         Au final, cela donne l'impression d'une page web qui se charge plus rapidement.
+
+            1. On fait récupérer au client le fichier socket.io.js
+               Le code qu'il contient permet de gérer la communication avec le serveur du côté du client,
+            2. Nous pouvons effectuer des actions du côté du client pour communiquer avec le serveur
+
+
+        - envoi et reception de messages
+          Maintenant que le client est connecté, on peut échanger des messages entre le client et le serveur
+            - Le serveur veut envoyer un message au client
+            - Le client veut envoyer un message au serveur
+
+        - Le serveur veut envoyer un message au client
+
+                io.sockets.on('connection', function (socket) {
+                        socket.emit('message', 'Vous êtes bien connecté !');
+                });
+
+
+            emit()prend 2 paramètres : - le type de message
+                                       - le contenu
+
+            Si vous voulez envoyer plusieurs données différentes avec votre message,
+            regroupez-les sous forme d'objet comme ceci par exemple :
+
+                socket.emit('message', { content: 'Vous êtes bien connecté !', importance: '1' });
+
+
+            Du côté du fichier index.html (le client), on va écouter l'arrivée de messages de type "message" :
+
+                <script>
+                    var socket = io.connect('http://localhost:8080');
+                    socket.on('message', function(message) {
+                        alert('Le serveur a un message pour vous : ' + message);
+                    })
+                </script>
+
+
+            Avec socket.on(), on écoute les messages de type "message".
+            Lorsque des messages arrivent, on appelle la fonction de callback qui, ici, affiche simplement une boîte de dialogue.
+
+
+        - Le client veut envoyer un message au serveur
+          Ajouter un bouton dans la page web et envoyer un message au serveur lorsqu'on clique dessus.
+
+            <!DOCTYPE html>
+            <html>
+                <head>
+                    <meta charset="utf-8" />
+                    <title>Socket.io</title>
+                </head>
+
+                <body>
+                    <h1>Communication avec socket.io !</h1>
+                    <p><input type="button" value="Embêter le serveur" id="poke" /></p>
+
+                    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+                    <script src="/socket.io/socket.io.js"></script>
+                    <script>
+                        var socket = io.connect('http://localhost:8080');
+                        socket.on('message', function(message) {
+                            alert('Le serveur a un message pour vous : ' + message);
+                        })
+
+                        $('#poke').click(function () {
+                            socket.emit('message', 'Salut serveur, ça va ?');
+                        })
+                    </script>
+                </body>
+            </html>
+            //On utilise ici jQuery
+
+
+        - Si on veut récupérer ça du côté du serveur maintenant,
+          Il va nous falloir ajouter l'écoute des messages de type "message" dans la fonction de callback de la connexion :
+            io.sockets.on('connection', function (socket) {
+                socket.emit('message', 'Vous êtes bien connecté !');
+
+                // Quand le serveur reçoit un signal de type "message" du client
+                socket.on('message', function (message) {
+                    console.log('Un client me parle ! Il me dit : ' + message);
+                });
+            });
 
 
 

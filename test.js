@@ -1,10 +1,9 @@
-/** Autor : clement
- *
- *   - creer le serveur
- *   - tester les evenements
- *       - module kbd racourcis clavier
- *
- *
+/**
+ *      - creer le serveur / requete & reponse
+ *      - tester les evenements / modules
+ *          - module kbd racourcis clavier
+ *          - module markdown
+ *          - module expresse
  **/
 
 var http = require('http');
@@ -13,9 +12,36 @@ var url = require('url');
 var querystring = require('querystring');
 
 var EventEmitter = require('events').EventEmitter;
+var jeu = new EventEmitter();
+
+var markdown = require('markdown').markdown;
+console.log(markdown.toHTML('Un paragraphe en **markdown** !'));
+//_________________________________________________________________________________________________________________
+// expresse
+
+var express = require('express');
+
+var app = express();
+
+app.get('/', function(req, res) {
+    res.setHeader('Content-Type', 'text/plain');
+    res.end('Vous êtes à l\'accueil, que puis-je pour vous ?');
+});
+app.get('/sous-sol', function(req, res) {
+    res.setHeader('Content-Type', 'text/plain');
+    res.end('Vous êtes dans la cave à vins, ces bouteilles sont à moi !');
+});
+app.get('/etage/1/chambre', function(req, res) {
+    res.end('Hé ho, c\'est privé ici !');
+    res.setHeader('Content-Type', 'text/plain');
+
+
+});
+
+app.listen(8080);
 
 //_________________________________________________________________________________________________________________
-// Déclaration
+// Déclaration serveur
 var server = http.createServer(function(req, reponse ) {
 
     //var page = url.parse(requete.url).pathname;
@@ -46,13 +72,12 @@ var server = http.createServer(function(req, reponse ) {
     reponse.end();
 
 });
-var jeu = new EventEmitter();
 
 //_________________________________________________________________________________________________________________
 // Ecoute
 server.on('close', function() {
     console.log('Bye bye !');
-})
+});
 jeu.on('gameover', function(message,entier){
     console.log(message,entier);
 });
@@ -68,4 +93,4 @@ kbd.on(67, function(){
 // Emmission
 jeu.emit('gameover', 'Vous avez perdu !',2);
 
-server.listen(8080);
+server.listen(8081);
