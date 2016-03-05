@@ -3,25 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <title>Socket.io</title>
+    <script src="jquery.js"></script>
+    <script src="socket.io/lib/socket.js"></script>
 </head>
 
 <body>
 <h1>Communication avec socket.io !</h1>
 <input type="button" id="poke" value="wesh"/>
 
-    <script src="jquery-2.2.0.min.js"></script>
-    <script src="socket.io/lib/socket.js"></script>
-    <script>
-        var socket = io.connect('http://localhost:8080');
+<script>
+var socket = io.connect('http://localhost:8080');
         socket.on('message', function(message) {
-            alert('Le serveur a un message pour vous : ' + message);
+            alert('Le serveur a un message pour vous : ' + message); //$message contient le message
         });
 
-        var but = document.getDocumentById('poke');
+        var but = document.getElementById("poke");
         but.click(function () {
             socket.emit('message', 'Salut serveur, ça va ?');
         });
-
 
     </script>
 </body>

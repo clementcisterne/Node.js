@@ -1,9 +1,13 @@
 /**
  * Created by lamou on 04/03/2016.
  */
+
+
+//_______________________________________________________________________________________
+// Variables
+
 var http = require('http');
 var fs = require('fs');
-
 
 // Chargement du fichier index.html affiché au client
 var server = http.createServer(function(req, res) {
@@ -25,5 +29,9 @@ io.sockets.on('connection', function (socket) {
     // Quand le serveur reçoit un signal de type "message" du client
     socket.on('message', function (message) { console.log('Un client me parle ! Il me dit : ' + message); });
 });
+
+
+//_______________________________________________________________________________________
+//
 
 server.listen(8080);
