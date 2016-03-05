@@ -17,9 +17,11 @@
             alert('Le serveur a un message pour vous : ' + message);
         });
 
-        $('#poke').click(function () {
+        var but = document.getDocumentById('poke');
+        but.click(function () {
             socket.emit('message', 'Salut serveur, ça va ?');
         });
+
 
     </script>
 </body>
