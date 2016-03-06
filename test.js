@@ -6,20 +6,22 @@
  *          - module expresse
  **/
 
+//_________________________________________________________________________________________________________________
+// Require
+
 var http = require('http');
 var url = require('url');
-//var kbd = require('kbd');
 var querystring = require('querystring');
-
 var EventEmitter = require('events').EventEmitter;
-var jeu = new EventEmitter();
-
 var markdown = require('markdown').markdown;
-console.log(markdown.toHTML('Un paragraphe en **markdown** !'));
-//_________________________________________________________________________________________________________________
-// expresse
-
 var express = require('express');
+
+//var kbd = require('kbd');
+
+//_________________________________________________________________________________________________________________
+// Variables
+var jeu = new EventEmitter();
+console.log(markdown.toHTML('Un paragraphe en **markdown** !'));
 
 var app = express();
 
@@ -38,7 +40,7 @@ app.get('/etage/1/chambre', function(req, res) {
 
 });
 
-app.listen(8080);
+app.listen(8082);
 
 //_________________________________________________________________________________________________________________
 // Déclaration serveur
@@ -56,14 +58,14 @@ var server = http.createServer(function(req, reponse ) {
         reponse.write("vosu êtes dans le sous-sol putain\n");
     }else if ( page == '/chambre'){
         reponse.write("vosu êtes dans la chambre putain\n");
-    }else{
+    }
+    else{
         reponse.writeHead(404);
         reponse.write("OK tu sais pas ou t'es putain\n");
     }
 
-    //gestion des param
+/**gestion des noms param**/
     var params = querystring.parse(url.parse(req.url).query);
-
     if('prenom' in params && 'nom' in params){
         reponse.write("Tu t'appel Jean-Michel Lacuite ! ... \nNon jdeconne tu t'appel "+params['prenom']+' '+params['nom']+".. enfin c'est toi qui le dit");
     }
@@ -86,8 +88,6 @@ kbd.on(67, function(){
     server.close();
 } )
 */
-
-
 
 //_________________________________________________________________________________________________________________
 // Emmission
